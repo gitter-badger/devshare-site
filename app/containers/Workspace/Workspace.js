@@ -16,6 +16,7 @@ import * as TabActions from '../../actions/tabs';
 import SideBar from '../../components/SideBar/SideBar';
 import ProjectSettingsDialog from '../../components/ProjectSettingsDialog/ProjectSettingsDialog';
 import SharingDialog from '../../components/SharingDialog/SharingDialog';
+import GithubDialog from '../../components/GithubDialog/GithubDialog';
 import Pane from '../../components/Pane/Pane';
 import WorkspacePopover from '../../components/WorkspacePopover/WorkspacePopover';
 import RaisedButton from 'material-ui/lib/raised-button';
@@ -106,8 +107,13 @@ class Workspace extends Component {
     });
   };
 
+  toggleGithubModal = () => {
+    this.setState({
+      githubOpen: !this.state.githubOpen
+    });
+  };
+
   saveSettings = (data) => {
-    // console.log('save settings called:', data);
     this.props.updateProject(this.props.project, data);
     //TODO: Show popup of save success/failure
     this.toggleSettingsModal();
@@ -253,13 +259,21 @@ class Workspace extends Component {
   handleDowloadFileClick = (e) => {
     this.props.downloadFiles(this.props.project);
   };
-  
+
   addCollaborator = (username) => {
     this.props.addCollaborator(this.props.project, username);
   };
 
   removeCollaborator = (username) => {
     this.props.removeCollaborator(this.props.project, username);
+  };
+
+  handleCloneClick = () => {
+    this.toggleGithubModal()
+  };
+
+  handleGithubModalSubmit = (url) => {
+    this.props.cloneRepo(this.props.project, url);
   };
 
   render() {
@@ -290,6 +304,7 @@ class Workspace extends Component {
           onFilesAdd={ this.onFilesAdd }
           onFileDelete={ this.deleteFile }
           onDownloadFileClick={ this.handleDowloadFileClick }
+          onCloneClick={ this.handleCloneClick }
         />
         <Pane
           tabs={ this.props.tabs }
@@ -316,6 +331,15 @@ class Workspace extends Component {
             onSave={ this.saveSettings }
             onAddCollab={ this.addCollaborator }
             onRemoveCollab={ this.removeCollaborator }
+          /> : null
+        }
+        {
+          this.state.githubOpen ?
+          <GithubDialog
+            project={ this.props.project }
+            modalOpen={ this.state.githubOpen }
+            toggleModal={ this.toggleGithubModal }
+            onSave={ this.handleGithubModalSubmit }
           /> : null
         }
       </div>

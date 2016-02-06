@@ -33,6 +33,7 @@ export default class SideBar extends Component {
     onFilesDrop: PropTypes.func,
     onSharingClick: PropTypes.func,
     onFilesAdd: PropTypes.func,
+    onCloneClick: PropTypes.func
   };
 
   componentDidMount() {
@@ -89,6 +90,7 @@ export default class SideBar extends Component {
 
         <div className="SideBar-Buttons">
           <IconMenu className="SideBar-Button" iconButtonElement={ <IconButton style={ iconButtonStyle } iconStyle={{ width: '100%', height: '100%' }} ><AddIcon /></IconButton> }>
+            <MenuItem primaryText="Clone from Github" onClick={ this.props.onCloneClick } />
             <MenuItem primaryText="Upload files" onClick={ this.handleFileUploadClick } />
             <MenuItem primaryText="Download files" onClick={ this.props.onDownloadFileClick } />
             <MenuItem primaryText="Add file" onClick={ this.props.onAddFileClick.bind(this, '/') } />
