@@ -24,7 +24,7 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import './Workspace.scss';
 
 let grout = new Grout();
-let fileEntityBlackList = ['.DS_Store', 'node_modules'];
+const fileEntityBlackList = ['.DS_Store', 'node_modules'];
 
 class Workspace extends Component {
   constructor() {
@@ -80,6 +80,7 @@ class Workspace extends Component {
       this.fb.reset();
     }
     const groutProject = project ? grout.Project(name, owner.username) : null;
+
     // Move to parent ref
     this.fb = Rebase.createClass(groutProject.fbUrl.replace(name, ''));
 
@@ -140,17 +141,16 @@ class Workspace extends Component {
   };
 
   openFile = (file) => {
-    const { project, tabs } = this.props;
+    const { project, tabs } = this.props
     const tabData = {
       project,
       title: file.name || file.path.split('/')[file.path.split('/').length - 1],
       type: 'file',
-      file,
-    };
-    //TODO: Search by matching path instead of tab title
-    //Search for already matching title
-    const matchingInd = findIndex(tabs.list, {title: tabData.title});
-    //Only open tab if file is not already open
+      file
+    }
+    // Search for already matching title
+    const matchingInd = findIndex(tabs.list, {path: file.path});
+    // Only open tab if file is not already open
     if(matchingInd === -1){
       this.props.openTab(tabData);
       //Select last tab
