@@ -37,10 +37,9 @@ export default class DeleteDialog extends Component {
     })
   }
 
-  handleSubmit = e => {
-    e.preventDefault()
-    if (this.props.onSubmit) this.props.onSubmit(name)
+  handleSubmit = () => {
     this.close()
+    if (this.props.onSubmit) this.props.onSubmit(name)
   }
 
   handleInputChange = (name, e) => {

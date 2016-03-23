@@ -32,21 +32,27 @@ class Projects extends Component {
     this.props.getProjects(this.props.username)
   }
 
-  collabClick = (user) => {
+  collabClick = user => {
     this.context.router.push(`/${user.username}`)
   }
 
-  toggleModal = (name) => {
+  closeModal = name => {
     let newState = {}
-    newState[`${name}Modal`] = !this.state[`${name}Modal`] || false
+    newState[`${name}Modal`] =  false
     this.setState(newState)
   }
 
-  newSubmit = (name) => {
+  openModal = name => {
+    let newState = {}
+    newState[`${name}Modal`] = true
+    this.setState(newState)
+  }
+
+  newSubmit = name => {
     this.props.addProject(name, this.props.username)
   }
 
-  openProject = (project) => {
+  openProject = project => {
     this.context.router.push(`/${project.owner.username}/${project.name}`)
   }
 
@@ -61,7 +67,7 @@ class Projects extends Component {
 
   addCollabClick = currentProject => {
     this.setState({ currentProject })
-    this.toggleModal('addCollab')
+    this.closeModal('addCollab')
   }
 
   addCollaborator = username => {
@@ -95,7 +101,7 @@ class Projects extends Component {
       projects.unshift((
         <NewProjectTile
           key="Project-New"
-          onClick={ this.toggleModal.bind(this, 'newProject') }
+          onClick={ this.openModal.bind(this, 'newProject') }
         />
       ))
     }
@@ -105,20 +111,16 @@ class Projects extends Component {
         <div className="Projects-Tiles">
           { projects }
         </div>
-        {
-          this.state.newProjectModal ?
           <NewProjectDialog
             open={ this.state.newProjectModal }
-            onRequestClose={ this.toggleModal.bind(this, 'newProject') }
-            onCreateClick={ this.newSubmit }
-          /> : null
-        }
+            onSubmit={ this.newSubmit }
+          />
         {
           (this.state.currentProject && this.state.addCollabModal) ?
           <SharingDialog
             project={ this.state.currentProject }
             modalOpen={ this.state.addCollabModal }
-            toggleModal={ this.toggleModal.bind(this, 'addCollab') }
+            toggleModal={ this.openModal.bind(this, 'addCollab') }
             onUserSearch={ this.searchUsers }
             onAddCollab={ this.addCollaborator }
             onRemoveCollab={ this.removeCollaborator }

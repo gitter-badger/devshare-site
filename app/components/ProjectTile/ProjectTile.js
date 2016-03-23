@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react'
+import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import Paper from 'material-ui/lib/paper'
 import Avatar from 'material-ui/lib/avatar'
@@ -17,14 +17,19 @@ const avatarSize = 50
 const hoverColor = '#03A9F4'
 
 export default class ProjectTile extends Component {
-  constructor (props){
-    super(props)
+  constructor (){
+    super()
   }
 
   state = { dropdownOpen: false, deleteOpen: false }
 
   static propTypes = {
-    project: PropTypes.object.isRequired,
+    project: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      owner: PropTypes.shape({
+        username: PropTypes.string
+      })
+    }),
     onSelect: PropTypes.func.isRequired,
     onAddCollabClick: PropTypes.func,
     onCollabClick: PropTypes.func,
@@ -119,7 +124,6 @@ export default class ProjectTile extends Component {
         <ProjectSettingsDialog
           project={ this.props.project }
           modalOpen={ this.state.settingsOpen }
-          toggleModal={ this.toggleDropdown }
           onSave={ this.saveSettings }
           onVimToggle={ this.toggleVim }
           vimEnabled={ this.state.vimEnabled }

@@ -1,59 +1,107 @@
-import React, {Component, PropTypes} from 'react';
-import Dialog from 'material-ui/lib/dialog';
-import TextField from 'material-ui/lib/text-field';
-import FlatButton from 'material-ui/lib/flat-button';
-import './NewProjectDialog.scss';
+import React, {Component, PropTypes} from 'react'
+import Dialog from 'material-ui/lib/dialog'
+import TextField from 'material-ui/lib/text-field'
+import FlatButton from 'material-ui/lib/flat-button'
+import './NewProjectDialog.scss'
 
-class NewProjectDialog extends Component {
-  constructor(props){
-    super(props);
+export default class NewProjectDialog extends Component {
+  constructor (props) {
+    super(props)
   }
 
-  componentWillReceiveProps(nextProps) {
+  state = { open: false }
+
+  static propTypes = {
+    open: PropTypes.bool,
+    onSubmit: PropTypes.func
+  }
+
+  componentWillReceiveProps (nextProps) {
     if (nextProps.open) {
+      this.state.open = nextProps.open
       setTimeout(() => {
-        this.refs.modalTextField.focus();
-      }, 500);
+        if(this.refs.modalTextField) this.refs.modalTextField.focus()
+      })
     }
-  };
+  }
 
-  handleInputChange = (name, e) => {
-    e.preventDefault();
+  componentWillReceiveProps (nextProps) {
+    console.log('recieved propps', nextProps)
+    if (nextProps !== this.state) this.setState(nextProps)
+  }
+
+  open = () => {
     this.setState({
-      [name]: e.target.value
-    });
-  };
+      open: true
+    })
+  }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    if(this.props && this.props.onCreateClick){
-      this.props.onCreateClick(this.state.name);
-      this.props.onRequestClose();
+  close = () => {
+    this.setState({
+      open: false
+    })
+  }
+
+  handleInputChange = (e) => {
+    e.preventDefault()
+    this.setState({
+      name: e.target.value
+    })
+  }
+
+  handleSubmit = e => {
+    console.log('handle submit called:')
+    // e.preventDefault()
+    // if (!this.name || !this.nameIsValid) return this.setState({ errorText: 'name is invalid'})
+    this.close()
+    if(this.props && this.props.onSubmit){
+      console.log('submit is set')
+      this.props.onSubmit(this.state.name)
     }
-  };
+  }
 
-  render(){
+  getErrorText = () => {
+    if (this.state.errorText) return this.state.errorText
+    if (!this.name || this.name === '' || this.name === null) return 'Name is required'
+    if(!this.nameIsValid) return 'Name is too short'
+    return 'Name is too short'
+  }
+
+  nameIsValid = () => {
+    // TODO: DO other validation
+    return this.state.name.length >= 3
+  }
+
+  render () {
+    const actions = [
+      <FlatButton
+        label='Close'
+        secondary={ true }
+        onTouchTap={ this.close }
+      />,
+      <FlatButton
+        label='Create'
+        primary={ true }
+        onClick={ this.handleSubmit } />
+    ]
     return (
       <Dialog
-        className="NewProjectDialog"
-        title="New Project"
-        modal={false}
-        open={ this.props.open }
-        onRequestClose={ this.props.onRequestClose }>
-        <div className="NewProjectDialog-Inputs">
+        className='NewProjectDialog'
+        title='New Project'
+        actions={ actions }
+        modal={ false }
+        open={ this.state.open }
+        onRequestClose={ this.close }>
+        <div className='NewProjectDialog-Inputs'>
           <TextField
-            hintText="exampleProject"
-            floatingLabelText="Project Name"
-            ref="modalTextField"
-            onChange={  this.handleInputChange.bind(this, 'name')}
+            hintText='exampleProject'
+            floatingLabelText='Project Name'
+            ref='modalTextField'
+            onChange={ this.handleInputChange }
+            onEnterKeyDown={ this.handleSubmit }
           />
         </div>
-        <div className="NewProjectDialog-Buttons">
-          <FlatButton label="Create" primary={true} onClick={ this.handleSubmit }/>
-        </div>
       </Dialog>
-    );
+    )
   }
 }
-
-export default NewProjectDialog
